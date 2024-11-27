@@ -76,4 +76,20 @@ export const getAllDataFromIndexedDB = (storeName) => {
     };
   };
   
+  export const updateDataInIndexedDB = async (storeName, updatedItem) => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open("my-database", 1);
+      request.onerror = (event) => reject("Error opening database");
+  
+      request.onsuccess = (event) => {
+        const db = event.target.result;
+        const transaction = db.transaction(storeName, "readwrite");
+        const store = transaction.objectStore(storeName);
+  
+        store.put(updatedItem);
+        transaction.oncomplete = () => resolve("Data updated successfully");
+        transaction.onerror = () => reject("Error updating data");
+      };
+    });
+  };
   
