@@ -27,7 +27,7 @@ async function syncOfflineData() {
         console.log('Syncing data:', data);
 
           console.log(`Successfully synced data with ID ${data.id}`);
-           deleteDataFromIndexedDB(storeName, data.id);
+          //  deleteDataFromIndexedDB(storeName, data.id);
        
     }
   } catch (error) {
