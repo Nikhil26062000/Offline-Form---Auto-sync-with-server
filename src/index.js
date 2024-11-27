@@ -4,6 +4,44 @@ import './index.css';
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
+import { deleteDataFromIndexedDB, getAllDataFromIndexedDB } from './utils/indexedDB';
+
+const storeName = 'form-data'; // Specify the IndexedDB store name
+let isSyncing = false; // Flag to prevent duplicate syncs
+
+async function syncOfflineData() {
+  if (isSyncing) return; // Prevent duplicate syncs if already syncing
+  isSyncing = true;
+
+  try {
+    console.log('Syncing offline data...');
+    const offlineData = await getAllDataFromIndexedDB(storeName);
+
+    if (offlineData.length === 0) {
+      console.log('No offline data to sync.');
+      return;
+    }
+
+    for (const data of offlineData) {
+
+        console.log('Syncing data:', data);
+
+          console.log(`Successfully synced data with ID ${data.id}`);
+           deleteDataFromIndexedDB(storeName, data.id);
+       
+    }
+  } catch (error) {
+    console.error('Error during sync process:', error);
+  } finally {
+    isSyncing = false;
+  }
+}
+
+// Add event listener to sync data when coming back online
+window.addEventListener('online', async () => {
+  console.log('Internet connection restored. Syncing offline data...');
+  await syncOfflineData();
+});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -12,12 +50,8 @@ root.render(
   </React.StrictMode>
 );
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://cra.link/PWA
-serviceWorkerRegistration.unregister();
+// Enable service worker for offline functionality
+serviceWorkerRegistration.register();
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+// Measure app performance
 reportWebVitals();
