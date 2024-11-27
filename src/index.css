@@ -65,10 +65,15 @@
 
 .data-item {
   margin-bottom: 15px;
+  background-color: #45a049;
+  padding: 5px;
+  border-radius: 10px;
 }
 
 .data-item p {
-  margin: 5px 0;
+  /* margin: 5px 0; */
+  padding: 10px;
+  /* background-color: rgb(159, 228, 159) */
 }
 
 .data-image {
@@ -76,4 +81,6 @@
   height: auto;
   border-radius: 5px;
   margin-top: 10px;
+
+
 }
