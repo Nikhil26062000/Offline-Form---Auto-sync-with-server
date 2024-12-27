@@ -104,31 +104,31 @@ const Form = () => {
   };
 
   // Listen for online event to sync data
-  useEffect(() => {
-    const handleOnline = async () => {
-      // alert("form1 Internet connection restored. Syncing data to server...");
-      console.log("form1 Internet connection restored. Syncing data to server...");
-      await syncDataToServer();
-    };
+  // useEffect(() => {
+  //   const handleOnline = async () => {
+  //     // alert("form1 Internet connection restored. Syncing data to server...");
+  //     console.log("form1 Internet connection restored. Syncing data to server...");
+  //     await syncDataToServer();
+  //   };
 
-    window.addEventListener("online", handleOnline);
+  //   window.addEventListener("online", handleOnline);
 
-    return () => {
-      window.removeEventListener("online", handleOnline);
-    };
-  }, []);
-
-
+  //   return () => {
+  //     window.removeEventListener("online", handleOnline);
+  //   };
+  // }, []);
 
 
-  useEffect(()=>{
-      const handleOnline2 = async () => {
-          // alert("When comp render Syncing data to server...");
-          await syncDataToServer();
-        };
+
+
+  // useEffect(()=>{
+  //     const handleOnline2 = async () => {
+  //         // alert("When comp render Syncing data to server...");
+  //         await syncDataToServer();
+  //       };
         
-        handleOnline2()
-    },[])
+  //       handleOnline2()
+  //   },[])
 
   return (
     <div className="form-container">

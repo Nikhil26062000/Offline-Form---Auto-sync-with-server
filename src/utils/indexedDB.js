@@ -99,3 +99,70 @@ export const deleteDataFromIndexedDB = async (storeName, id) => {
     request.onerror = (event) => reject(event.target.error);
   });
 };
+
+
+export const getAllStoreNames = (dbName) => {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(dbName);
+
+    request.onsuccess = (event) => {
+      const db = event.target.result;
+      const storeNames = Array.from(db.objectStoreNames); // Convert DOMStringList to Array
+      db.close(); // Close the database connection
+      resolve(storeNames);
+    };
+
+    request.onerror = (event) => {
+      reject(`Error opening database: ${event.target.error}`);
+    };
+  });
+};
+
+
+
+export const fetchAllStoresWithValues = (dbName) => {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(dbName);
+
+    request.onsuccess = (event) => {
+      const db = event.target.result;
+      const storeNames = Array.from(db.objectStoreNames);
+      const results = {};
+
+      // Process each store
+      let remainingStores = storeNames.length;
+
+      if (remainingStores === 0) {
+        resolve(results); // Resolve immediately if there are no stores
+        db.close();
+        return;
+      }
+
+      storeNames.forEach((storeName) => {
+        const transaction = db.transaction(storeName, 'readonly');
+        const store = transaction.objectStore(storeName);
+        const getAllRequest = store.getAll();
+
+        getAllRequest.onsuccess = () => {
+          results[storeName] = getAllRequest.result;
+          remainingStores--;
+
+          if (remainingStores === 0) {
+            resolve(results); // Resolve when all stores are processed
+            db.close();
+          }
+        };
+
+        getAllRequest.onerror = () => {
+          reject(`Failed to fetch data from store: ${storeName}`);
+          db.close();
+        };
+      });
+    };
+
+    request.onerror = (event) => {
+      reject(`Error opening database: ${event.target.error}`);
+    };
+  });
+};
+

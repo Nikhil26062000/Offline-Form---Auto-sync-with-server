@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
-import { deleteDataFromIndexedDB, getAllDataFromIndexedDB } from './utils/indexedDB';
+import { deleteDataFromIndexedDB, fetchAllStoresWithValues, getAllDataFromIndexedDB, getAllStoreNames } from './utils/indexedDB';
 
 // const storeName = 'school-data'; // Specify the IndexedDB store name
 // let isSyncing = false; // Flag to prevent duplicate syncs
@@ -43,6 +43,39 @@ import { deleteDataFromIndexedDB, getAllDataFromIndexedDB } from './utils/indexe
 //   await syncOfflineData();
 // });
 
+window.addEventListener('online', async () => {
+  // getAllStoreNames('my-db')
+  // .then((storeNames) => {
+  //   console.log('Store names:', storeNames);
+  // })
+  // .catch((error) => {
+  //   console.error(error);
+  // });
+
+  try {
+    const data = await fetchAllStoresWithValues('my-db');
+    console.log('Database stores with values:', data);
+
+    // Loop through each store
+    for (const [storeName, storeData] of Object.entries(data)) {
+      console.log(`Store: ${storeName}`);
+
+      
+      // Loop through each item in the store
+      storeData.forEach((item, index) => {
+        console.log(`  Item ${index + 1}:`, item);
+      });
+
+      let is_synced_false_data = storeData.filter((item, index) => item.isSynced === false)
+      console.log(`is_synced_false_data data for ${storeName} is :`, is_synced_false_data);
+      
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+})
+
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
@@ -55,3 +88,32 @@ serviceWorkerRegistration.register();
 
 // Measure app performance
 reportWebVitals();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
