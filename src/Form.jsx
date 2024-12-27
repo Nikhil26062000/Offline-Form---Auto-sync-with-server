@@ -5,6 +5,7 @@ import {
   saveDataToIndexedDB,
   updateDataInIndexedDB, // Add this function to update IndexedDB entries
 } from "../src/utils/indexedDB";
+import Navbar from "./Navbar";
 // import "./Form.css";
 
 const Form = () => {
@@ -80,21 +81,22 @@ const Form = () => {
   };
 
   // Listen for online event to sync data
-  useEffect(() => {
-    const handleOnline = async () => {
-      alert("Internet connection restored. Syncing data to server...");
-      await syncDataToServer();
-    };
+  // useEffect(() => {
+  //   const handleOnline = async () => {
+  //     console.log("form1 Internet connection restored. Syncing data to server...");
+  //     await syncDataToServer();
+  //   };
 
-    window.addEventListener("online", handleOnline);
+  //   window.addEventListener("online", handleOnline);
 
-    return () => {
-      window.removeEventListener("online", handleOnline);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("online", handleOnline);
+  //   };
+  // }, []);
 
   return (
     <div className="form-container">
+    <Navbar/>
       <h1 className="form-header">User Form</h1>
       <form onSubmit={handleSubmit} className="form">
         <label className="form-label">

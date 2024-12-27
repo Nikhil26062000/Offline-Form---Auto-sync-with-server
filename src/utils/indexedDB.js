@@ -40,7 +40,7 @@ export const getAllDataFromIndexedDB = (storeName) => {
         const request = store.getAll();
   
         request.onsuccess = () => {
-            alert("get the data");
+            console.log("get the data");
           resolve(request.result);
         };
   
@@ -87,7 +87,14 @@ export const getAllDataFromIndexedDB = (storeName) => {
         const store = transaction.objectStore(storeName);
   
         store.put(updatedItem);
-        transaction.oncomplete = () => resolve("Data updated successfully");
+        console.log("Store after update", store);
+        
+        transaction.oncomplete = () => {
+          console.log("Data updated successfully");
+          resolve("Data updated successfully");
+          console.log("data updated");
+          
+        }
         transaction.onerror = () => reject("Error updating data");
       };
     });
