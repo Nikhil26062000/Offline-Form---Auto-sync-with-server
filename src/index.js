@@ -89,10 +89,17 @@ serviceWorkerRegistration.register();
 // Measure app performance
 reportWebVitals();
 
-
-
-
-
+//! with help of json schema we can automate the offline online syncing of data
+// const data = [
+//   {
+//     formName: 'form1',
+//     api: '/api/form1',
+//   },
+//   {
+//     formName: 'form2',
+//     api: '/api/form2',
+//   }
+// ]
 
 
 
