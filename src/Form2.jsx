@@ -8,7 +8,7 @@ import {
 import { useNavigate } from "react-router-dom";
 // import "./Form.css";
 
-const Form = () => {
+const Form2 = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,7 +16,7 @@ const Form = () => {
   });
   const [offlineData, setOfflineData] = useState([]);
   const [syncedData, setSyncedData] = useState([]);
-  const storeName = "form-data";
+  const storeName = "school-data";
 
   const navigate = useNavigate()
 
@@ -48,12 +48,12 @@ const Form = () => {
       // Simulate server sync
       saveDataToIndexedDB(storeName, { ...formData, isSynced: true });
       setSyncedData((prev) => [...prev, formData]);
-      console.log("form1 Data sent to server ", formData);
+      console.log("form2 Data sent to server", formData);
     } else {
       // Save data to IndexedDB if offline
       saveDataToIndexedDB(storeName, { ...formData, isSynced: false });
       setOfflineData((prev) => [...prev, formData]);
-      console.log("form1 Data saved locally  because you are offline.");
+      console.log("form2 Data saved locally because you are offline.");
     }
 
     // Clear form after submission
@@ -64,50 +64,49 @@ const Form = () => {
     });
   };
 
-  // Sync IndexedDB data to server when online
-  const syncDataToServer = async () => {
-    const data = await getAllDataFromIndexedDB(storeName);
-
-    if (navigator.onLine) {
-      console.log("form1 You are online");
-
-      for (const item of data) {
-        if (!item.isSynced) {
-          try {
-            // Simulate server sync
-            setSyncedData((prev) =>{
-              item.isSynced = true;
-              return [...prev, item]
-            });
+    // Sync IndexedDB data to server when online
+    const syncDataToServer = async () => {
+      const data = await getAllDataFromIndexedDB(storeName);
   
-            // Update the item in IndexedDB to mark it as synced
-            await updateDataInIndexedDB(storeName, { ...item, isSynced: true });
-            console.log(`form1 Synced  data: ${item.name}`);
-          } catch (error) {
-            console.error("form1 Failed to sync  data:", item, error);
+      if (navigator.onLine) {
+        console.log("form2 You are online");
+        for (const item of data) {
+          if (!item.isSynced) {
+            try {
+              // Simulate server sync
+              setSyncedData((prev) =>{
+                item.isSynced = true;
+                return [...prev, item]
+              });
+    
+              // Update the item in IndexedDB to mark it as synced
+              await updateDataInIndexedDB(storeName, { ...item, isSynced: true });
+              console.log(`form2 Synced  data: ${item.name}`);
+            } catch (error) {
+              console.error("form2 Failed to sync  data:", item, error);
+            }
+            deleteDataFromIndexedDB(storeName,item.id)
+    
+          }else{
+               deleteDataFromIndexedDB(storeName, item.id);
+    
           }
-          deleteDataFromIndexedDB(storeName,item.id)
-  
-        }else{
-             deleteDataFromIndexedDB(storeName, item.id);
-  
         }
-      }
+    
+        setOfflineData([]);
   
-      setOfflineData([]);
-
-  } else {
-      console.log("form1 You are offline");
-  }
-
-   
-  };
+    } else {
+        console.log("form2 : You are offline");
+    }
+  
+     
+    };
 
   // Listen for online event to sync data
   useEffect(() => {
     const handleOnline = async () => {
-      // alert("form1 Internet connection restored. Syncing data to server...");
-      console.log("form1 Internet connection restored. Syncing data to server...");
+    //   alert("form2 Internet connection restored . Syncing data to server...");
+      console.log("form2 Internet connection restored form2. Syncing data to server...");
       await syncDataToServer();
     };
 
@@ -119,22 +118,20 @@ const Form = () => {
   }, []);
 
 
-
-
   useEffect(()=>{
-      const handleOnline2 = async () => {
-          // alert("When comp render Syncing data to server...");
-          await syncDataToServer();
-        };
-        
-        handleOnline2()
-    },[])
+    const handleOnline2 = async () => {
+        // alert("When comp render Syncing data to server...");
+        await syncDataToServer();
+      };
+      
+      handleOnline2()
+  },[])
 
   return (
     <div className="form-container">
      <button onClick={handleForm1Click}>Form 1</button>
      <button onClick={handleForm2Click}>Form 2</button>
-      <h1 className="form-header">User Form</h1>
+      <h1 className="form-header">User Form2</h1>
       <form onSubmit={handleSubmit} className="form">
         <label className="form-label">
           Name:
@@ -175,7 +172,7 @@ const Form = () => {
 
       <div className="data-container">
         <div className="online-data">
-          <h2>Synced Data (Online)</h2>
+          <h2>Synced Data (Online) for Form2</h2>
           {syncedData.length > 0 ? (
             syncedData.map((item, index) => (
               <div key={index} className="data-item">
@@ -196,7 +193,7 @@ const Form = () => {
         </div>
 
         <div className="offline-data">
-          <h2>Offline Data</h2>
+          <h2>Offline Data for Form2</h2>
           {offlineData.length > 0 ? (
             offlineData.map((item, index) => (
               <div key={index} className="data-item">
@@ -220,4 +217,4 @@ const Form = () => {
   );
 };
 
-export default Form;
+export default Form2;
