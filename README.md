@@ -6,7 +6,7 @@
 **Overview
 This project consists of two forms that allow users to submit data. The project is in the master branch. The goal is to save form data in IndexedDB and ensure the data is synced with the server, even when there is no internet connection.
 
-**Workflow
+***Workflow
 When the internet is available:
 
 Form data is saved in IndexedDB.
