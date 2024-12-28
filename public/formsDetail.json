@@ -1,0 +1,12 @@
+{
+    "form-data":{
+       
+        "api": "https://jsonplaceholder.typicode.com/posts"
+       
+    },
+    "school-data":{
+        "name": "school-data",
+        "api": "https://jsonplaceholder.typicode.com/comments"
+       
+    }
+}

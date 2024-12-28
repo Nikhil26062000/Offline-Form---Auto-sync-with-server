@@ -95,7 +95,13 @@ export const deleteDataFromIndexedDB = async (storeName, id) => {
     const store = tx.objectStore(storeName);
     const request = store.delete(id);
 
-    request.onsuccess = () => resolve(`Data with id ${id} deleted successfully.`);
+    request.onsuccess = () => {
+      console.log(`Data with id ${id} deleted successfully from ${storeName}.`);
+
+      resolve(`Data with id ${id} deleted successfully from ${storeName}.`)
+      
+
+    };
     request.onerror = (event) => reject(event.target.error);
   });
 };

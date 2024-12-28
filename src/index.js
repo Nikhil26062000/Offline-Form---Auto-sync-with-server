@@ -1,10 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
-import reportWebVitals from './reportWebVitals';
-import { deleteDataFromIndexedDB, fetchAllStoresWithValues, getAllDataFromIndexedDB, getAllStoreNames } from './utils/indexedDB';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+import reportWebVitals from "./reportWebVitals";
+import {
+  deleteDataFromIndexedDB,
+  fetchAllStoresWithValues,
+  getAllDataFromIndexedDB,
+  getAllStoreNames,
+} from "./utils/indexedDB";
 
 // const storeName = 'school-data'; // Specify the IndexedDB store name
 // let isSyncing = false; // Flag to prevent duplicate syncs
@@ -28,7 +33,7 @@ import { deleteDataFromIndexedDB, fetchAllStoresWithValues, getAllDataFromIndexe
 
 //           console.log(`Successfully synced data with ID ${data.id}`);
 //           //  deleteDataFromIndexedDB(storeName, data.id);
-       
+
 //     }
 //   } catch (error) {
 //     console.error('Error during sync process:', error);
@@ -43,7 +48,16 @@ import { deleteDataFromIndexedDB, fetchAllStoresWithValues, getAllDataFromIndexe
 //   await syncOfflineData();
 // });
 
-window.addEventListener('online', async () => {
+var jsonData;
+const fetchFormDetails = async () => {
+  const data = await fetch(`${process.env.PUBLIC_URL}/formsDetail.json`);
+  jsonData = await data.json();
+  console.log(jsonData["form-data"].api);
+};
+
+fetchFormDetails();
+
+window.addEventListener("online", async () => {
   // getAllStoreNames('my-db')
   // .then((storeNames) => {
   //   console.log('Store names:', storeNames);
@@ -53,30 +67,48 @@ window.addEventListener('online', async () => {
   // });
 
   try {
-    const data = await fetchAllStoresWithValues('my-db');
-    console.log('Database stores with values:', data);
+    const data = await fetchAllStoresWithValues("my-db");
+    console.log("Database stores with values:", data);
 
     // Loop through each store
     for (const [storeName, storeData] of Object.entries(data)) {
       console.log(`Store: ${storeName}`);
 
-      
       // Loop through each item in the store
       storeData.forEach((item, index) => {
         console.log(`  Item ${index + 1}:`, item);
       });
 
-      let is_synced_false_data = storeData.filter((item, index) => item.isSynced === false)
-      console.log(`is_synced_false_data data for ${storeName} is :`, is_synced_false_data);
-      
+      let is_synced_false_data = storeData.filter(
+        (item, index) => item.isSynced === false
+      );
+      console.log(
+        `is_synced_false_data data for ${storeName} is :`,
+        is_synced_false_data
+      );
+
+      if (Object.keys(jsonData).includes(storeName)) {
+        console.log("Store is present");
+        console.log(jsonData[storeName].api);
+        try {
+          const data = await fetch(`${jsonData[storeName].api}`);
+          const api_data = await data.json();
+          console.log("api data", api_data);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      storeData.forEach((item, index) => {
+        deleteDataFromIndexedDB(storeName, item.id);
+      });
+
     }
   } catch (error) {
-    console.error('Error fetching data:', error);
+    console.error("Error fetching data:", error);
   }
-})
+});
 
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <App />
@@ -88,39 +120,5 @@ serviceWorkerRegistration.register();
 
 // Measure app performance
 reportWebVitals();
-
-//! with help of json schema we can automate the offline online syncing of data
-// const data = [
-//   {
-//     formName: 'form1',
-//     api: '/api/form1',
-//   },
-//   {
-//     formName: 'form2',
-//     api: '/api/form2',
-//   }
-// ]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
