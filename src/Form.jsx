@@ -18,16 +18,15 @@ const Form = () => {
   const [syncedData, setSyncedData] = useState([]);
   const storeName = "form-data";
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-    const handleForm1Click = () => {
-        navigate('/form')
-    }
+  const handleForm1Click = () => {
+    navigate("/form");
+  };
 
-    const handleForm2Click = () => {
-        navigate('/form2')
-    }
-
+  const handleForm2Click = () => {
+    navigate("/form2");
+  };
 
   // Handle form input changes
   const handleInputChange = (e) => {
@@ -40,21 +39,49 @@ const Form = () => {
     setFormData({ ...formData, image: e.target.files[0] });
   };
 
+  async function isOnline() {
+    try {
+      const response = await fetch("https://www.google.com", {
+        method: "HEAD",
+        mode: "no-cors",
+      });
+      return true; // Internet is available
+    } catch (error) {
+      return false; // No internet
+    }
+  }
+
   // Submit form data
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (navigator.onLine) {
-      // Simulate server sync
-      saveDataToIndexedDB(storeName, { ...formData, isSynced: true });
-      setSyncedData((prev) => [...prev, formData]);
-      console.log("form1 Data sent to server ", formData);
-    } else {
-      // Save data to IndexedDB if offline
-      saveDataToIndexedDB(storeName, { ...formData, isSynced: false });
-      setOfflineData((prev) => [...prev, formData]);
-      console.log("form1 Data saved locally  because you are offline.");
-    }
+    isOnline().then((status) => {
+      if (status) {
+        console.log("Internet is available");
+        // Simulate server sync
+        saveDataToIndexedDB(storeName, { ...formData, isSynced: true });
+        setSyncedData((prev) => [...prev, formData]);
+        console.log("form1 Data sent to server ", formData);
+      } else {
+        console.log("No internet connection");
+        // Save data to IndexedDB if offline
+        saveDataToIndexedDB(storeName, { ...formData, isSynced: false });
+        setOfflineData((prev) => [...prev, formData]);
+        console.log("form1 Data saved locally  because you are offline.");
+      }
+    });
+
+    // if (navigator.onLine) {
+    //   // Simulate server sync
+    //   saveDataToIndexedDB(storeName, { ...formData, isSynced: true });
+    //   setSyncedData((prev) => [...prev, formData]);
+    //   console.log("form1 Data sent to server ", formData);
+    // } else {
+    //   // Save data to IndexedDB if offline
+    //   saveDataToIndexedDB(storeName, { ...formData, isSynced: false });
+    //   setOfflineData((prev) => [...prev, formData]);
+    //   console.log("form1 Data saved locally  because you are offline.");
+    // }
 
     // Clear form after submission
     setFormData({
@@ -75,32 +102,27 @@ const Form = () => {
         if (!item.isSynced) {
           try {
             // Simulate server sync
-            setSyncedData((prev) =>{
+            setSyncedData((prev) => {
               item.isSynced = true;
-              return [...prev, item]
+              return [...prev, item];
             });
-  
+
             // Update the item in IndexedDB to mark it as synced
             await updateDataInIndexedDB(storeName, { ...item, isSynced: true });
             console.log(`form1 Synced  data: ${item.name}`);
           } catch (error) {
             console.error("form1 Failed to sync  data:", item, error);
           }
-          deleteDataFromIndexedDB(storeName,item.id)
-  
-        }else{
-             deleteDataFromIndexedDB(storeName, item.id);
-  
+          deleteDataFromIndexedDB(storeName, item.id);
+        } else {
+          deleteDataFromIndexedDB(storeName, item.id);
         }
       }
-  
+
       setOfflineData([]);
-
-  } else {
+    } else {
       console.log("form1 You are offline");
-  }
-
-   
+    }
   };
 
   // Listen for online event to sync data
@@ -118,22 +140,19 @@ const Form = () => {
   //   };
   // }, []);
 
-
-
-
   // useEffect(()=>{
   //     const handleOnline2 = async () => {
   //         // alert("When comp render Syncing data to server...");
   //         await syncDataToServer();
   //       };
-        
+
   //       handleOnline2()
   //   },[])
 
   return (
     <div className="form-container">
-     <button onClick={handleForm1Click}>Form 1</button>
-     <button onClick={handleForm2Click}>Form 2</button>
+      <button onClick={handleForm1Click}>Form 1</button>
+      <button onClick={handleForm2Click}>Form 2</button>
       <h1 className="form-header">User Form</h1>
       <form onSubmit={handleSubmit} className="form">
         <label className="form-label">
