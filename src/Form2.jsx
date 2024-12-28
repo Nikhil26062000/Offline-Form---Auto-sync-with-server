@@ -44,17 +44,33 @@ const Form2 = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (navigator.onLine) {
-      // Simulate server sync
-      saveDataToIndexedDB(storeName, { ...formData, isSynced: true });
-      setSyncedData((prev) => [...prev, formData]);
-      console.log("form2 Data sent to server", formData);
-    } else {
-      // Save data to IndexedDB if offline
-      saveDataToIndexedDB(storeName, { ...formData, isSynced: false });
-      setOfflineData((prev) => [...prev, formData]);
-      console.log("form2 Data saved locally because you are offline.");
-    }
+    isOnline().then((status) => {
+          if (status) {
+            console.log("Internet is available");
+            // Simulate server sync
+            saveDataToIndexedDB(storeName, { ...formData, isSynced: true });
+            setSyncedData((prev) => [...prev, formData]);
+            console.log("form1 Data sent to server ", formData);
+          } else {
+            console.log("No internet connection");
+            // Save data to IndexedDB if offline
+            saveDataToIndexedDB(storeName, { ...formData, isSynced: false });
+            setOfflineData((prev) => [...prev, formData]);
+            console.log("form1 Data saved locally  because you are offline.");
+          }
+        });
+
+    // if (navigator.onLine) {
+    //   // Simulate server sync
+    //   saveDataToIndexedDB(storeName, { ...formData, isSynced: true });
+    //   setSyncedData((prev) => [...prev, formData]);
+    //   console.log("form2 Data sent to server", formData);
+    // } else {
+    //   // Save data to IndexedDB if offline
+    //   saveDataToIndexedDB(storeName, { ...formData, isSynced: false });
+    //   setOfflineData((prev) => [...prev, formData]);
+    //   console.log("form2 Data saved locally because you are offline.");
+    // }
 
     // Clear form after submission
     setFormData({
