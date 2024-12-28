@@ -40,6 +40,18 @@ const Form2 = () => {
     setFormData({ ...formData, image: e.target.files[0] });
   };
 
+  async function isOnline() {
+    try {
+      const response = await fetch("https://www.google.com", {
+        method: "HEAD",
+        mode: "no-cors",
+      });
+      return true; // Internet is available
+    } catch (error) {
+      return false; // No internet
+    }
+  }
+
   // Submit form data
   const handleSubmit = async (e) => {
     e.preventDefault();
