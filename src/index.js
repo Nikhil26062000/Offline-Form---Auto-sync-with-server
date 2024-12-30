@@ -13,66 +13,19 @@ import {
 import { ConnectivityProvider } from "./context/connectivityContext";
 
 
-// const storeName = 'school-data'; // Specify the IndexedDB store name
-// let isSyncing = false; // Flag to prevent duplicate syncs
-
-// async function syncOfflineData() {
-//   if (isSyncing) return; // Prevent duplicate syncs if already syncing
-//   isSyncing = true;
-
-//   try {
-//     console.log('Syncing offline data...');
-//     const offlineData = await getAllDataFromIndexedDB(storeName);
-
-//     if (offlineData.length === 0) {
-//       console.log('No offline data to sync.');
-//       return;
-//     }
-
-//     for (const data of offlineData) {
-
-//         console.log('Syncing data:', data);
-
-//           console.log(`Successfully synced data with ID ${data.id}`);
-//           //  deleteDataFromIndexedDB(storeName, data.id);
-
-//     }
-//   } catch (error) {
-//     console.error('Error during sync process:', error);
-//   } finally {
-//     isSyncing = false;
-//   }
-// }
-
-// Add event listener to sync data when coming back online
-// window.addEventListener('online', async () => {
-//   console.log('Message from indexeddb Syncing offline data...');
-//   await syncOfflineData();
-// });
 
 
 
 
 
-
-
-
-window.addEventListener('online',() => {
-  console.log("Internet aagya ")
-})
-
-
-window.addEventListener('offline',() => {
-  console.log("Internet chla gya ")
-})
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
+ 
   <ConnectivityProvider>
     <App />
     </ConnectivityProvider>
-  </React.StrictMode>
+
 );
 
 // Enable service worker for offline functionality

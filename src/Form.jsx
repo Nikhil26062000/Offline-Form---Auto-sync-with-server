@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   getAllDataFromIndexedDB,
   deleteDataFromIndexedDB,
@@ -7,6 +7,7 @@ import {
 } from "../src/utils/indexedDB";
 import { useNavigate } from "react-router-dom";
 // import "./Form.css";
+import { ConnectivityContext } from "./context/connectivityContext";
 
 const Form = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +18,8 @@ const Form = () => {
   const [offlineData, setOfflineData] = useState([]);
   const [syncedData, setSyncedData] = useState([]);
   const storeName = "form-data";
+  const { isOnline } = useContext(ConnectivityContext);
+
 
   const navigate = useNavigate();
 
@@ -39,37 +42,27 @@ const Form = () => {
     setFormData({ ...formData, image: e.target.files[0] });
   };
 
-  async function isOnline() {
-    try {
-      const response = await fetch("https://www.google.com", {
-        method: "HEAD",
-        mode: "no-cors",
-      });
-      return true; // Internet is available
-    } catch (error) {
-      return false; // No internet
-    }
-  }
+ 
 
   // Submit form data
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    isOnline().then((status) => {
-      if (status) {
-        console.log("Internet is available");
+   
+      if (isOnline) {
+        // console.log("Internet is available");
         // Simulate server sync
         saveDataToIndexedDB(storeName, { ...formData, isSynced: true });
         setSyncedData((prev) => [...prev, formData]);
         console.log("form1 Data sent to server ", formData);
       } else {
-        console.log("No internet connection");
+        // console.log("No internet connection");
         // Save data to IndexedDB if offline
         saveDataToIndexedDB(storeName, { ...formData, isSynced: false });
         setOfflineData((prev) => [...prev, formData]);
         console.log("form1 Data saved locally  because you are offline.");
       }
-    });
+    
 
     // if (navigator.onLine) {
     //   // Simulate server sync
@@ -96,7 +89,7 @@ const Form = () => {
     const data = await getAllDataFromIndexedDB(storeName);
 
     if (navigator.onLine) {
-      console.log("form1 You are online");
+      // console.log("form1 You are online");
 
       for (const item of data) {
         if (!item.isSynced) {
@@ -121,7 +114,7 @@ const Form = () => {
 
       setOfflineData([]);
     } else {
-      console.log("form1 You are offline");
+      // console.log("form1 You are offline");
     }
   };
 
