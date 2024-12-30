@@ -8,37 +8,23 @@ const ConnectivityContext = createContext();
 // Create a provider component
 const ConnectivityProvider = ({ children }) => {
   const [isOnline, setIsOnline] = useState(navigator.onLine); // Initial state based on browser's online status
-  const [formDetail,setFormDetail] = useState();
+  const [formDetail,setFormDetail] = useState(null);
 
-//   useEffect(() => {
-//     // Event listeners for online and offline events
-//     const handleOnline = () => setIsOnline(true);
-//     const handleOffline = () => setIsOnline(false);
 
-//     window.addEventListener('online', handleOnline);
-//     window.addEventListener('offline', handleOffline);
 
-//     // Clean up event listeners on component unmount
-//     return () => {
-//       window.removeEventListener('online', handleOnline);
-//       window.removeEventListener('offline', handleOffline);
-//     };
-//   }, []);
-
-useEffect(()=>{
-   
 const fetchFormDetails = async () => {
-  const data = await fetch(`${process.env.PUBLIC_URL}/formsDetail.json`);
-  const jsonData = await data.json();
-  console.log(jsonData);
-  setFormDetail(jsonData);
-};
+    const data = await fetch(`${process.env.PUBLIC_URL}/formsDetail.json`);
+    const jsonData = await data.json();
+    console.log(jsonData);
+    setFormDetail(jsonData);
+  };
 
-fetchFormDetails();
-},[])
+
 
 
 useEffect(()=>{
+fetchFormDetails();
+
   const initialCheck = async() =>{
     try {
       console.log("Application start... checking indexeddb");
@@ -63,7 +49,7 @@ useEffect(()=>{
           is_synced_false_data
         );
   
-        if (Object.keys(formDetail)?.includes(storeName)) {
+        if (formDetail && Object.keys(formDetail)?.includes(storeName)) {
           console.log("Store is present");
           console.log(formDetail[storeName].api);
           try {
@@ -85,7 +71,8 @@ useEffect(()=>{
 
   }
 
-  initialCheck()
+  initialCheck();
+
 },[])
 
 window.addEventListener("online", async () => {
