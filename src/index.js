@@ -57,6 +57,15 @@ import { ConnectivityProvider } from "./context/connectivityContext";
 
 
 
+window.addEventListener('online',() => {
+  console.log("Internet aagya ")
+})
+
+
+window.addEventListener('offline',() => {
+  console.log("Internet chla gya ")
+})
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
