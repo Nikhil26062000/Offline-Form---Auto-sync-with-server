@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
@@ -10,6 +10,8 @@ import {
   getAllDataFromIndexedDB,
   getAllStoreNames,
 } from "./utils/indexedDB";
+import { ConnectivityProvider } from "./context/connectivityContext";
+
 
 // const storeName = 'school-data'; // Specify the IndexedDB store name
 // let isSyncing = false; // Flag to prevent duplicate syncs
@@ -48,70 +50,19 @@ import {
 //   await syncOfflineData();
 // });
 
-var jsonData;
-const fetchFormDetails = async () => {
-  const data = await fetch(`${process.env.PUBLIC_URL}/formsDetail.json`);
-  jsonData = await data.json();
-  console.log(jsonData["form-data"].api);
-};
 
-fetchFormDetails();
 
-window.addEventListener("online", async () => {
-  // getAllStoreNames('my-db')
-  // .then((storeNames) => {
-  //   console.log('Store names:', storeNames);
-  // })
-  // .catch((error) => {
-  //   console.error(error);
-  // });
 
-  try {
-    const data = await fetchAllStoresWithValues("my-db");
-    console.log("Database stores with values:", data);
 
-    // Loop through each store
-    for (const [storeName, storeData] of Object.entries(data)) {
-      console.log(`Store: ${storeName}`);
 
-      // Loop through each item in the store
-      storeData.forEach((item, index) => {
-        console.log(`  Item ${index + 1}:`, item);
-      });
 
-      let is_synced_false_data = storeData.filter(
-        (item, index) => item.isSynced === false
-      );
-      console.log(
-        `is_synced_false_data data for ${storeName} is :`,
-        is_synced_false_data
-      );
-
-      if (Object.keys(jsonData).includes(storeName)) {
-        console.log("Store is present");
-        console.log(jsonData[storeName].api);
-        try {
-          const data = await fetch(`${jsonData[storeName].api}`);
-          const api_data = await data.json();
-          console.log("api data", api_data);
-        } catch (error) {
-          console.log(error);
-        }
-      }
-      storeData.forEach((item, index) => {
-        deleteDataFromIndexedDB(storeName, item.id);
-      });
-
-    }
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-});
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
+  <ConnectivityProvider>
     <App />
+    </ConnectivityProvider>
   </React.StrictMode>
 );
 
